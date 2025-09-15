@@ -11,12 +11,18 @@ import java.util.List;
 public interface FoodService {
 
     public String createSizeGroup(SizeGroupDTO sizeGroupRequest);
+
     public String updateSizeGroup(SizeGroupDTO sizeGroupRequest);
+
     public SizeGroupDTO getSizeGroup(Long sizeGroupId);
+
     public List<SizeGroupDTO> getAllSizeGroups();
 
     public String createMenu(MenuDTO menuRequest);
+
     public String updateMenu(MenuDTO menuRequest);
+
     public List<MenuDTO> getMenuWithMenuSizes();
-    public List<CategoryDTO> getAllCategoriesWithMenus() ;
+
+    public List<CategoryDTO> getAllCategoriesWithMenus();
 }

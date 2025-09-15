@@ -2,11 +2,12 @@ package com.storeaniket.rms.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-public class SizeDTO {
-
+@Getter
+@Setter
+public class OptionDTO {
 
     private Long id;
 
@@ -14,6 +15,5 @@ public class SizeDTO {
     private String name;
 
     @NotNull(message = "SizeGroupId cannot be null")
-    private Long sizeGroupId;
-
+    private Long optionGroupId;
 }

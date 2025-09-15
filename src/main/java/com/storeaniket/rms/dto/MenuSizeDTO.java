@@ -8,11 +8,11 @@ import java.util.List;
 @Data
 public class MenuSizeDTO {
     private Long id;
-    @NotNull(message="price is required")
+    @NotNull(message = "price is required")
     private Double price;
-    @NotNull(message="menu id is required")
+    @NotNull(message = "menu id is required")
     private Long menuId;
-    @NotNull(message="size id is required")
+    @NotNull(message = "size id is required")
     private Long sizeId;
 
 //    private List<MenuSizeDTO> menuSizes;

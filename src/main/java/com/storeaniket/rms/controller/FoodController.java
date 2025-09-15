@@ -2,9 +2,11 @@ package com.storeaniket.rms.controller;
 
 import com.storeaniket.rms.dto.CategoryDTO;
 import com.storeaniket.rms.dto.MenuDTO;
+import com.storeaniket.rms.dto.OptionGroupDTO;
 import com.storeaniket.rms.dto.SizeGroupDTO;
 import com.storeaniket.rms.repository.SizeGroupRepository;
 import com.storeaniket.rms.service.FoodService;
+import com.storeaniket.rms.service.OptionGroupService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +17,11 @@ import java.util.List;
 public class FoodController {
 
     FoodService foodService;
+    OptionGroupService optionGroupService;
 
-    public FoodController(FoodService foodService) {
+    public FoodController(FoodService foodService, OptionGroupService optionGroupService) {
         this.foodService = foodService;
+        this.optionGroupService = optionGroupService;
     }
 
     // FOR SIZEAGROUP
@@ -49,6 +53,11 @@ public class FoodController {
         return foodService.createMenu(menuDTO);
     }
 
+    @PutMapping("/MenuWithMenuSizes/update")
+    public String updateMenu(@Valid @RequestBody MenuDTO menuDTO) {
+        return foodService.updateMenu(menuDTO);
+    }
+
 
     @GetMapping("/MenuWithMenuSizes")
     public List<MenuDTO> getMenuWithMenuSizes() {
@@ -59,5 +68,29 @@ public class FoodController {
     @GetMapping("/CategoryWithMenus")
     public List<CategoryDTO> getCategoryWithMenus() {
         return foodService.getAllCategoriesWithMenus();
+    }
+
+
+
+
+//    FOR OPTIONS AND OPTIONGROUP
+    @PostMapping("/create/OptionGroupWithOption")
+    public String createOptionGroup(@Valid @RequestBody OptionGroupDTO optionGroupDTO) {
+        return optionGroupService.createOptionGroupWithOptions(optionGroupDTO);
+    }
+
+    @PutMapping("/update/OptionGroupWithOption")
+    public String updateOptionGroup(@Valid @RequestBody OptionGroupDTO optionGroupDTO) {
+        return optionGroupService.updateOptionGroupWithOptions(optionGroupDTO);
+    }
+
+    @GetMapping("/OptionGroupWithOption")
+    public List<OptionGroupDTO> getOptionGroupWithOption() {
+        return optionGroupService.getAllOptionGroupsWithOptions();
+    }
+
+    @GetMapping("/OptionGroupWithOption/{id}")
+    public OptionGroupDTO getOptionGroupById(@PathVariable(value = "id") Long id) {
+        return optionGroupService.getOptionGroupWithOptions(id);
     }
 }

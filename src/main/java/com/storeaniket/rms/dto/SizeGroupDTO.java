@@ -12,7 +12,7 @@ public class SizeGroupDTO {
 
     private Long id;
 
-//    @NotNull(message="Name cannot be null")
+    //    @NotNull(message="Name cannot be null")
     private String name;
 
     private List<SizeDTO> sizes;

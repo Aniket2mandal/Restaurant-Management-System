@@ -180,17 +180,10 @@ public class FoodServiceImpl implements FoodService {
             for (MenuSizeDB menuSizeDB : menuSizeDBList) {
                 if (menuSizeDB.getId().equals(menuSizeDTO.getId())) {
                     menuSizeDB.setPrice(menuSizeDTO.getPrice());
-                    menuSizeDB.setMenu(existingMenu);
-                    SizeDB sizes = sizeRepository.findById(menuSizeDTO.getSizeId())
-                            .orElseThrow(() -> new RuntimeException("Size not found"));
-                    menuSizeDB.setSize(sizes);
-
                     menuSizeRepository.save(menuSizeDB);
                 }
             }
         }
-//    menuSizeRepository.saveAll(menuSizeDBList);
-//    menuRepository.save(existingMenu);
 
         return "success";
     }
@@ -198,6 +191,7 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public List<MenuDTO> getMenuWithMenuSizes() {
+
         List<MenuDB> menuDBList = menuRepository.findAll();
         List<MenuDTO> menuDTOList = new ArrayList<>();
         for (MenuDB menuDB : menuDBList) {

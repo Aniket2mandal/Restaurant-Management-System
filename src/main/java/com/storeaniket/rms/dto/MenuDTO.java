@@ -13,13 +13,13 @@ public class MenuDTO {
 
     private Long id;
 
-    @NotBlank(message="Name is required")
-    @Length(min = 3,max=100)
+    @NotBlank(message = "Name is required")
+    @Length(min = 3, max = 100)
     private String name;
 
-     private Double basePrice;
+    private Double basePrice;
 
-    @NotNull(message="Category cannot be null")
+    @NotNull(message = "Category cannot be null")
     private Long categoryId;
 
     private Long sizeGroupId;
