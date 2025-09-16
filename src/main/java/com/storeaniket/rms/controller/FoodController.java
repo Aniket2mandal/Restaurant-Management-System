@@ -1,9 +1,6 @@
 package com.storeaniket.rms.controller;
 
-import com.storeaniket.rms.dto.CategoryDTO;
-import com.storeaniket.rms.dto.MenuDTO;
-import com.storeaniket.rms.dto.OptionGroupDTO;
-import com.storeaniket.rms.dto.SizeGroupDTO;
+import com.storeaniket.rms.dto.*;
 import com.storeaniket.rms.repository.SizeGroupRepository;
 import com.storeaniket.rms.service.FoodService;
 import com.storeaniket.rms.service.OptionGroupService;
@@ -93,4 +90,18 @@ public class FoodController {
     public OptionGroupDTO getOptionGroupById(@PathVariable(value = "id") Long id) {
         return optionGroupService.getOptionGroupWithOptions(id);
     }
+
+
+
+//    FOR SIZEGROUP OPTIONGROUP
+    @PutMapping("/LinkSizeAndOptionGroup")
+    public String linkSizeAndOptionGroup(@Valid @RequestBody SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO) {
+        return optionGroupService.createSizeGroupOptionGroup(sizeGroupOptionGroupDTO);
+    }
+
+    @DeleteMapping("/UnLinkSizeAndOptionGroup/{id}")
+    public String unlinkSizeAndOptionGroup(@PathVariable(value="id") Long id) {
+        return optionGroupService.deleteSizeGroupOptionGroup(id);
+    }
+
 }

@@ -26,6 +26,8 @@ public class MenuDTO {
 
     private List<MenuSizeDTO> menuSizes;
 
+
+
 //    private String categoryName;
 
     public MenuDTO() {

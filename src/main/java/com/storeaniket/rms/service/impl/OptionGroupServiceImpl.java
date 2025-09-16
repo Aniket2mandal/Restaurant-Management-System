@@ -2,10 +2,15 @@ package com.storeaniket.rms.service.impl;
 
 import com.storeaniket.rms.dto.OptionDTO;
 import com.storeaniket.rms.dto.OptionGroupDTO;
+import com.storeaniket.rms.dto.SizeGroupOptionGroupDTO;
 import com.storeaniket.rms.model.OptionDB;
 import com.storeaniket.rms.model.OptionGroupDB;
+import com.storeaniket.rms.model.SizeGroupDB;
+import com.storeaniket.rms.model.SizeGroupOptionGroupDB;
 import com.storeaniket.rms.repository.OptionGroupRepository;
 import com.storeaniket.rms.repository.OptionRepository;
+import com.storeaniket.rms.repository.SizeGroupOptionGroupRepository;
+import com.storeaniket.rms.repository.SizeGroupRepository;
 import com.storeaniket.rms.service.OptionGroupService;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +20,17 @@ import java.util.List;
 @Service
 public class OptionGroupServiceImpl implements OptionGroupService {
 
+    private final SizeGroupRepository sizeGroupRepository;
     OptionGroupRepository optionGroupRepository;
     OptionRepository optionRepository;
+    SizeGroupOptionGroupRepository sizeGroupOptionGroupRepository;
 
-    public OptionGroupServiceImpl(OptionGroupRepository optionGroupRepository, OptionRepository optionRepository) {
+    public OptionGroupServiceImpl(OptionGroupRepository optionGroupRepository, OptionRepository optionRepository
+    , SizeGroupOptionGroupRepository sizeGroupOptionGroupRepository, SizeGroupRepository sizeGroupRepository) {
         this.optionGroupRepository = optionGroupRepository;
         this.optionRepository = optionRepository;
+        this.sizeGroupOptionGroupRepository = sizeGroupOptionGroupRepository;
+        this.sizeGroupRepository = sizeGroupRepository;
     }
 
 
@@ -36,7 +46,6 @@ public class OptionGroupServiceImpl implements OptionGroupService {
             optionDB.setOptionGroup(savedOptionGroup);
             optionRepository.save(optionDB);
         }
-
         return "success";
     }
 
@@ -89,4 +98,28 @@ public class OptionGroupServiceImpl implements OptionGroupService {
         }
         return optionGroupDTOList;
     }
+
+
+
+//    FOR SIZEGROUP OPTIONGROUP
+@Override
+    public String createSizeGroupOptionGroup(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO){
+        SizeGroupDB sizeGroupDB = sizeGroupRepository.findById(sizeGroupOptionGroupDTO.getSizeGroupId())
+                .orElseThrow(() -> new RuntimeException("Size group not found"));
+
+        OptionGroupDB optionGroupDB = optionGroupRepository.findById(sizeGroupOptionGroupDTO.getOptionGroupId())
+                .orElseThrow(() -> new RuntimeException("Option group not found"));
+
+        SizeGroupOptionGroupDB savedSizeGroupOptionGroupDB = new SizeGroupOptionGroupDB();
+        savedSizeGroupOptionGroupDB.setSizeGroup(sizeGroupDB);
+        savedSizeGroupOptionGroupDB.setOptionGroup(optionGroupDB);
+        sizeGroupOptionGroupRepository.save(savedSizeGroupOptionGroupDB);
+        return "success";
+}
+
+@Override
+    public String deleteSizeGroupOptionGroup(Long id) {
+        sizeGroupOptionGroupRepository.deleteById(id);
+        return "success";
+}
 }
