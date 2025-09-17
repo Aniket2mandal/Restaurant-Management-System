@@ -9,7 +9,8 @@ import org.hibernate.validator.constraints.Length;
 import java.util.List;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class MenuDTO {
 
 
@@ -31,6 +32,11 @@ public class MenuDTO {
     private List<OptionDTO> options;
 
     private List<OptionDTO> removeOptions;
+
+//    FOR MENUINFO API
+    private List<SizeDTO> sizes;
+    private List<OptionDTO> menuOptions;
+    private List<OptionGroupDTO> optionGroups;
 
 //    private String categoryName;
 

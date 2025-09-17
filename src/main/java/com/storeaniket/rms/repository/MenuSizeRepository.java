@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface MenuSizeRepository extends JpaRepository<MenuSizeDB, Long> {
     List<MenuSizeDB> findByMenuId(Long menuId);
+    List<MenuSizeDB> findBySizeId(Long sizeId);
 }
