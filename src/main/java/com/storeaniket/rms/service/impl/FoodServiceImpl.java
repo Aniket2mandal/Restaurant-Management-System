@@ -139,6 +139,7 @@ public class FoodServiceImpl implements FoodService {
         SizeGroupDB sizeGroup = sizeGroupRepository.findById(dto.getSizeGroupId())
                 .orElseThrow(() -> new RuntimeException("SizeGroup not found"));
         menu.setSizeGroup(sizeGroup);
+
         MenuDB savedMenu = menuRepository.save(menu);
 
 //       naming
@@ -152,6 +153,7 @@ public class FoodServiceImpl implements FoodService {
 //                menuSizeDB.setPrice(sizeDTO.getPrice());
             menuSize.add(menuSizeDB);
         }
+
         menuSizeRepository.saveAll(menuSize);
 
         return "success";
@@ -184,7 +186,6 @@ public class FoodServiceImpl implements FoodService {
                 }
             }
         }
-
         return "success";
     }
 

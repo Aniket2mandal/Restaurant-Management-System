@@ -16,4 +16,6 @@ public class OptionDTO {
 
     @NotNull(message = "SizeGroupId cannot be null")
     private Long optionGroupId;
+
+    private boolean isSelected;
 }

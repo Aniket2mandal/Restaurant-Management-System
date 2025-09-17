@@ -1,16 +1,11 @@
 package com.storeaniket.rms.service.impl;
 
+import com.storeaniket.rms.dto.MenuDTO;
 import com.storeaniket.rms.dto.OptionDTO;
 import com.storeaniket.rms.dto.OptionGroupDTO;
 import com.storeaniket.rms.dto.SizeGroupOptionGroupDTO;
-import com.storeaniket.rms.model.OptionDB;
-import com.storeaniket.rms.model.OptionGroupDB;
-import com.storeaniket.rms.model.SizeGroupDB;
-import com.storeaniket.rms.model.SizeGroupOptionGroupDB;
-import com.storeaniket.rms.repository.OptionGroupRepository;
-import com.storeaniket.rms.repository.OptionRepository;
-import com.storeaniket.rms.repository.SizeGroupOptionGroupRepository;
-import com.storeaniket.rms.repository.SizeGroupRepository;
+import com.storeaniket.rms.model.*;
+import com.storeaniket.rms.repository.*;
 import com.storeaniket.rms.service.OptionGroupService;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +16,21 @@ import java.util.List;
 public class OptionGroupServiceImpl implements OptionGroupService {
 
     private final SizeGroupRepository sizeGroupRepository;
+    private final MenuOptionRepository menuOptionRepository;
     OptionGroupRepository optionGroupRepository;
     OptionRepository optionRepository;
     SizeGroupOptionGroupRepository sizeGroupOptionGroupRepository;
+    MenuRepository menuRepository;
 
     public OptionGroupServiceImpl(OptionGroupRepository optionGroupRepository, OptionRepository optionRepository
-    , SizeGroupOptionGroupRepository sizeGroupOptionGroupRepository, SizeGroupRepository sizeGroupRepository) {
+            , SizeGroupOptionGroupRepository sizeGroupOptionGroupRepository, SizeGroupRepository sizeGroupRepository
+            , MenuRepository menuRepository, MenuOptionRepository menuOptionRepository) {
         this.optionGroupRepository = optionGroupRepository;
         this.optionRepository = optionRepository;
         this.sizeGroupOptionGroupRepository = sizeGroupOptionGroupRepository;
         this.sizeGroupRepository = sizeGroupRepository;
+        this.menuRepository = menuRepository;
+        this.menuOptionRepository = menuOptionRepository;
     }
 
 
@@ -100,10 +100,9 @@ public class OptionGroupServiceImpl implements OptionGroupService {
     }
 
 
-
-//    FOR SIZEGROUP OPTIONGROUP
-@Override
-    public String createSizeGroupOptionGroup(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO){
+    //    FOR SIZEGROUP OPTIONGROUP
+    @Override
+    public String createSizeGroupOptionGroup(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO) {
         SizeGroupDB sizeGroupDB = sizeGroupRepository.findById(sizeGroupOptionGroupDTO.getSizeGroupId())
                 .orElseThrow(() -> new RuntimeException("Size group not found"));
 
@@ -115,11 +114,138 @@ public class OptionGroupServiceImpl implements OptionGroupService {
         savedSizeGroupOptionGroupDB.setOptionGroup(optionGroupDB);
         sizeGroupOptionGroupRepository.save(savedSizeGroupOptionGroupDB);
         return "success";
-}
+    }
 
-@Override
+    @Override
     public String deleteSizeGroupOptionGroup(Long id) {
         sizeGroupOptionGroupRepository.deleteById(id);
         return "success";
-}
+    }
+
+    @Override
+    public String linkMenuOption(MenuDTO menuDTO) {
+
+        MenuDB menuDB = menuRepository.findById(menuDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Menu not found"));
+
+        if (menuDTO.getOptions() != null && !menuDTO.getOptions().isEmpty()) {
+            for (OptionDTO optionDTO : menuDTO.getOptions()) {
+                OptionDB optionDB = optionRepository.findById(optionDTO.getId())
+                        .orElseThrow(() -> new RuntimeException("Option not found"));
+
+                List<MenuOptionDB> existing = menuOptionRepository.findByMenuIdAndOptionId(menuDB.getId(), optionDB.getId());
+//                if (!existing.isEmpty()) {
+//                    menuOptionRepository.deleteAll(existing);
+//                }
+                if (existing.isEmpty()) {
+                    MenuOptionDB menuOptionDB = new MenuOptionDB();
+                    menuOptionDB.setMenu(menuDB);
+                    menuOptionDB.setOption(optionDB);
+                    menuOptionRepository.save(menuOptionDB);
+                }
+            }
+        }
+        if (menuDTO.getRemoveOptions() != null && !menuDTO.getRemoveOptions().isEmpty()) {
+            for (OptionDTO optionDTO : menuDTO.getRemoveOptions()) {
+                OptionDB optionDB = optionRepository.findById(optionDTO.getId())
+                        .orElseThrow(() -> new RuntimeException("Option not found"));
+
+                List<MenuOptionDB> existingOptionAndMenu = menuOptionRepository.findByMenuIdAndOptionId(menuDB.getId(), optionDB.getId());
+                if (!existingOptionAndMenu.isEmpty()) {
+                    menuOptionRepository.deleteAll(existingOptionAndMenu);
+                }
+            }
+        }
+        return "success";
+    }
+
+    @Override
+    public List<OptionDTO> getMenuOptions(Long id) {
+        List<MenuOptionDB> menuOptionDBList = menuOptionRepository.findByMenuId(id);
+
+        List<OptionDTO> optionDTOList = new ArrayList<>();
+        for (MenuOptionDB menuOptionDB : menuOptionDBList) {
+            OptionDB option = menuOptionDB.getOption();
+            OptionDTO optionDTO = new OptionDTO();
+            optionDTO.setId(option.getId());
+            optionDTO.setName(option.getName());
+            optionDTO.setOptionGroupId(option.getOptionGroupId());
+            optionDTOList.add(optionDTO);
+        }
+        return optionDTOList;
+    }
+
+    @Override
+    public MenuDTO getMenuWithOptions(Long id) {
+
+        MenuDB menuDB = menuRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Menu not found"));
+
+        List<SizeGroupOptionGroupDB> sizeGroupOptionGroupDBList =
+                sizeGroupOptionGroupRepository.findBySizeGroupId(menuDB.getSizeGroupId());
+
+
+        List<OptionDB> allOptions = new ArrayList<>();
+        for (SizeGroupOptionGroupDB sizeGroupOptionGroupDB : sizeGroupOptionGroupDBList) {
+            allOptions.addAll(optionRepository.findByOptionGroupId(sizeGroupOptionGroupDB.getOptionGroupId()));
+        }
+
+        MenuDTO menuDTO = new MenuDTO();
+        menuDTO.setId(id);
+
+        List<OptionDTO> optionDTOList = new ArrayList<>();
+        List<MenuOptionDB> menuOptionDBList = menuOptionRepository.findByMenuId(menuDB.getId());
+
+        for (OptionDB optionDB : allOptions) {
+            OptionDTO optionDTO = new OptionDTO();
+            optionDTO.setId(optionDB.getId());
+            optionDTO.setName(optionDB.getName());
+
+            boolean isSelected = false;
+            for (MenuOptionDB menuOptionDB : menuOptionDBList) {
+                if (menuOptionDB.getOption().getId().equals(optionDB.getId())) {
+//                    optionDTO.setSelected(true);
+                    isSelected = true;
+                    break;
+                }
+            }
+            optionDTO.setSelected(isSelected);
+            optionDTOList.add(optionDTO);
+        }
+        menuDTO.setOptions(optionDTOList);
+        return menuDTO;
+
+    }
+
+    @Override
+    public String createMenuOptionUsingSelected(MenuDTO menuDTO) {
+
+        MenuDB menuDB = menuRepository.findById(menuDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Menu not found"));
+        if (menuDTO.getOptions() != null && !menuDTO.getOptions().isEmpty()) {
+            for (OptionDTO optionDTO : menuDTO.getOptions()) {
+                OptionDB optionDB = optionRepository.findById(optionDTO.getId())
+                        .orElseThrow(() -> new RuntimeException("Option not found"));
+
+                List<MenuOptionDB> existing = menuOptionRepository.findByMenuIdAndOptionId(menuDB.getId(), optionDB.getId());
+
+                if (existing.isEmpty()) {
+                    if (optionDTO.isSelected()) {
+                        MenuOptionDB menuOptionDB = new MenuOptionDB();
+                        menuOptionDB.setMenu(menuDB);
+                        menuOptionDB.setOption(optionDB);
+                        menuOptionRepository.save(menuOptionDB);
+                    }
+                } else {
+                    if (optionDTO.isSelected() == false) {
+                        for (MenuOptionDB menuOptionDB : existing) {
+                            menuOptionRepository.delete(menuOptionDB);
+                        }
+                    }
+                }
+            }
+        }
+        return "success";
+    }
+
 }

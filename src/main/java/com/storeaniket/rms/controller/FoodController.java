@@ -1,6 +1,7 @@
 package com.storeaniket.rms.controller;
 
 import com.storeaniket.rms.dto.*;
+import com.storeaniket.rms.repository.MenuOptionRepository;
 import com.storeaniket.rms.repository.SizeGroupRepository;
 import com.storeaniket.rms.service.FoodService;
 import com.storeaniket.rms.service.OptionGroupService;
@@ -104,4 +105,23 @@ public class FoodController {
         return optionGroupService.deleteSizeGroupOptionGroup(id);
     }
 
+    @PutMapping("/handleMenuOptions")
+    public String handleMenuOptions(@Valid @RequestBody MenuDTO menuDTO) {
+        return optionGroupService.linkMenuOption(menuDTO);
+    }
+
+    @GetMapping("/MenuOptions/{id}")
+    public List<OptionDTO> getMenuOptions(@PathVariable(value = "id") Long id) {
+        return optionGroupService.getMenuOptions(id);
+    }
+
+    @GetMapping("/MenuOptionWithOption/{id}")
+    public MenuDTO getMenuOptionWithOption(@PathVariable(value = "id") Long id) {
+        return optionGroupService.getMenuWithOptions(id);
+    }
+
+    @PostMapping("/MenuOptionUsingSelected")
+    public String menuOptionUsingSelected(@Valid @RequestBody MenuDTO menuDTO) {
+        return optionGroupService.createMenuOptionUsingSelected(menuDTO);
+    }
 }

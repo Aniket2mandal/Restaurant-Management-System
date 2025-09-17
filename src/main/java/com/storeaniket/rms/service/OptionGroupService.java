@@ -1,5 +1,7 @@
 package com.storeaniket.rms.service;
 
+import com.storeaniket.rms.dto.MenuDTO;
+import com.storeaniket.rms.dto.OptionDTO;
 import com.storeaniket.rms.dto.OptionGroupDTO;
 import com.storeaniket.rms.dto.SizeGroupOptionGroupDTO;
 import jakarta.validation.constraints.AssertFalse;
@@ -18,5 +20,14 @@ public interface OptionGroupService {
     public List<OptionGroupDTO> getAllOptionGroupsWithOptions();
 
     public String createSizeGroupOptionGroup(SizeGroupOptionGroupDTO sizeGroupOptionGroupDTO);
+
     public String deleteSizeGroupOptionGroup(Long id);
+
+    public String linkMenuOption(MenuDTO menuDTO);
+
+    public List<OptionDTO> getMenuOptions(Long id);
+
+    public MenuDTO getMenuWithOptions(Long id);
+
+    public String createMenuOptionUsingSelected(MenuDTO menuDTO);
 }
